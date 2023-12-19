@@ -1,8 +1,3 @@
-options(timeout = 10000)
-BiocManager::install("SNPlocs.Hsapiens.dbSNP155.GRCh37")
-BiocManager::install("BSgenome.Hsapiens.1000genomes.hs37d5")
-install.packages("vroom")
-
 library(MungeSumstats)
 library(vroom)
 library(dplyr)
