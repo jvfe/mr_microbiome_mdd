@@ -35,3 +35,7 @@ read_ukbb_sumstat <-
 sumstats_list <- dir_ls("data/neal_depression/howard_phenotypes/", glob = "*tsv.bgz")
 
 purrr::walk(sumstats_list, read_ukbb_sumstat, threads = 16)
+
+mibiogen_sumstats <- dir_ls("data/mibiogen/", recurse = TRUE, glob = "*txt.gz")
+
+purrr::walk(mibiogen_sumstats, read_ukbb_sumstat, threads = 16)
