@@ -80,7 +80,7 @@ bacs <-
 combs <- tidyr::expand_grid(depression_exps, bacs)
 colnames(combs) <- c("exposure_data", "outcome_data")
 
-purrr::pmap(combs, run_MR)
+purrr::pwalk(combs, run_MR, .progress = TRUE)
 
 # run_MR(
 #   exposure_data = "results/clean_sumstats/2090.gwas.imputed_v3.both_sexes.tsv.gz",
