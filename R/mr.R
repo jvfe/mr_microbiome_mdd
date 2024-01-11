@@ -41,18 +41,7 @@ read_bacteria <- function(path) {
 
 run_MR <- function(exposure_data, outcome_data) {
 
-  message(paste("Running", exposure_data, "against", outcome_data))
-
-  mdd <- read_depression(exposure_data)
-
-  bacteria <- read_bacteria(outcome_data)
-
-  dat <-
-    harmonise_data(exposure_dat = mdd, outcome_dat = bacteria)
-
-  df <- add_rsq(dat)
-
-  outcome <- bacteria$outcome[1]
+  outcome <- stringr::str_remove(fs::path_file(outcome_data), ".summary.txt.gz")
 
   exposure_name <- paste(
     str_extract(exposure_data, "\\d{4}"),
@@ -60,16 +49,33 @@ run_MR <- function(exposure_data, outcome_data) {
     "MDD",
     sep = "_"
   )
-
   result_name <- paste0(exposure_name, "-", gsub("\\.", "_", outcome))
+  dir_name <- paste0("results/reports/", result_name)
 
-  vroom_write(df, file = paste0("results/harmonised/", result_name, ".txt.gz"))
 
-  mr_report(
-    dat,
-    output_path = paste0("results/reports/", result_name),
-    output_type = "md"
-  )
+  if (fs::dir_exists(dir_name)) {
+    message(paste0(result_name, "? This result is already done!"))
+    return(0)
+  } else {
+    message(paste("Running", exposure_data, "against", outcome_data))
+
+    mdd <- read_depression(exposure_data)
+
+    bacteria <- read_bacteria(outcome_data)
+
+    dat <-
+      harmonise_data(exposure_dat = mdd, outcome_dat = bacteria)
+
+    df <- add_rsq(dat)
+
+    vroom_write(df, file = paste0("results/harmonised/", result_name, ".txt.gz"))
+
+    mr_report(
+      dat,
+      output_path = dir_name,
+      output_type = "md"
+    )
+  }
 }
 
 depression_exps <- fs::dir_ls("results/clean_sumstats/")
