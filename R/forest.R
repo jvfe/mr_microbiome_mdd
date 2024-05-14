@@ -73,12 +73,18 @@ get_specific_taxon <- function(table, taxon) {
 pathways <- filtered |>
   filter(str_starts(p1, "GWAS_"))
 
+pathways_clean <- pathways |>
+    mutate(p1 = str_remove_all(p1, "GWAS_"))
+
+pathways_clean |>
+  vroom::vroom_write("results/mr_pathways_clean.tsv")
+
 taxa <- filtered |>
   filter(!(p1 %in% pathways$p1)) %>%
   mutate(specific = purrr::map_chr(unique(p1), get_specific_taxon, table = .)) |>
   filter(p1 == specific)
 
-make_forest(pathways |> mutate(p1 = str_remove_all(p1, "GWAS_")))
+make_forest(pathways_clean)
 
 ggsave(
   "results/pathways_plot.png",
